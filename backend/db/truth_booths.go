@@ -57,3 +57,8 @@ func GetTruthBoothsBySeason(db *sql.DB, seasonID int) ([]TruthBooth, error) {
 
 	return tbs, nil
 }
+
+func DeleteTruthBooth(db *sql.DB, seasonID, tbID int) error {
+	_, err := db.Exec("DELETE FROM truth_booths WHERE id = ? AND season_id = ?", tbID, seasonID)
+	return err
+}

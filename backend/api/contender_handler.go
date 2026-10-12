@@ -116,3 +116,32 @@ func (s *Server) handleGetContenders() http.HandlerFunc {
 		json.NewEncoder(w).Encode(resp)
 	}
 }
+
+// @Summary Delete a contender for a specific season
+// @Tags Contenders
+// @Param season_id path int true "Season ID"
+// @Param id path int true "Contender ID"
+// @Failure 400 {string} string "Invalid season ID or contender ID"
+// @Failure 500 {string} string "Internal server error"
+// @Router /api/v1/seasons/{season_id}/contenders/{id} [delete]
+func (s *Server) handleDeleteContender() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		seasonID, err := strconv.Atoi(r.PathValue("season_id"))
+		if err != nil {
+			http.Error(w, "Invalid season ID or contender ID", http.StatusBadRequest)
+			return
+		}
+		contenderID, err := strconv.Atoi(r.PathValue("id"))
+		if err != nil {
+			http.Error(w, "Invalid season ID or contender ID", http.StatusBadRequest)
+			return
+		}
+
+		if err := db.DeleteContender(s.db, seasonID, contenderID); err != nil {
+			http.Error(w, "Fehler beim Löschen des Teilnehmers", http.StatusInternalServerError)
+			return
+		}
+
+		w.WriteHeader(http.StatusNoContent)
+	}
+}

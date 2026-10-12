@@ -9,7 +9,7 @@ type Contender struct {
 	Gender   string
 }
 
-func AddContender(db *sql.DB, seasonID int, name, gender string) (*Contender, error){
+func AddContender(db *sql.DB, seasonID int, name, gender string) (*Contender, error) {
 	query := `
 		INSERT INTO contenders (season_id, name, gender)
 		VALUES (?, ?, ?)
@@ -61,4 +61,9 @@ func GetContendersBySeason(db *sql.DB, seasonID int) ([]*Contender, error) {
 		return nil, err
 	}
 	return contenders, nil
+}
+
+func DeleteContender(db *sql.DB, seasonID, contenderID int) error {
+	_, err := db.Exec("DELETE FROM contenders WHERE id = ? AND season_id = ?", contenderID, seasonID)
+	return err
 }

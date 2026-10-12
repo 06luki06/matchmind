@@ -192,3 +192,4 @@ func (s *Server) handleListSeasons() http.HandlerFunc {
 		json.NewEncoder(w).Encode(resp)
 	}
 }
+

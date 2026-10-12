@@ -46,12 +46,15 @@ func (s *Server) routes() {
 	// Contenders
 	s.router.HandleFunc("POST /api/v1/seasons/{id}/contenders", s.handleAddContender())
 	s.router.HandleFunc("GET /api/v1/seasons/{id}/contenders", s.handleGetContenders())
+	s.router.HandleFunc("DELETE /api/v1/seasons/{season_id}/contenders/{id}", s.handleDeleteContender())
 
 	// Truth Booth
 	s.router.HandleFunc("POST /api/v1/seasons/{id}/truth-booths", s.handleAddTruthBooth())
+	s.router.HandleFunc("DELETE /api/v1/seasons/{season_id}/truth-booths/{id}", s.handleDeleteTruthBooth())
 
 	// Matching Nights
 	s.router.HandleFunc("POST /api/v1/seasons/{id}/matching-nights", s.handleAddMatchingNight())
+	s.router.HandleFunc("DELETE /api/v1/seasons/{season_id}/matching-nights/{id}", s.handleDeleteMatchingNight())
 
 	// Solver
 	s.router.HandleFunc("GET /api/v1/seasons/{id}/solve", s.handleSolveSeason())

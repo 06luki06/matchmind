@@ -56,3 +56,32 @@ func (s *Server) handleAddTruthBooth() http.HandlerFunc {
 		json.NewEncoder(w).Encode(resp)
 	}
 }
+
+// @Summary Delete a truth booth result for a specific season
+// @Tags TruthBooths
+// @Param season_id path int true "Season ID"
+// @Param id path int true "Truth Booth ID"
+// @Failure 400 {string} string "Invalid season ID or truth booth ID"
+// @Failure 500 {string} string "Internal server error"
+// @Router /api/v1/seasons/{season_id}/truth-booths/{id} [delete]
+func (s *Server) handleDeleteTruthBooth() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		seasonID, err := strconv.Atoi(r.PathValue("season_id"))
+		if err != nil {
+			http.Error(w, "Invalid season ID or truth booth ID", http.StatusBadRequest)
+			return
+		}
+		tbID, err := strconv.Atoi(r.PathValue("id"))
+		if err != nil {
+			http.Error(w, "Invalid season ID or truth booth ID", http.StatusBadRequest)
+			return
+		}
+
+		if err := db.DeleteTruthBooth(s.db, seasonID, tbID); err != nil {
+			http.Error(w, "Fehler beim Löschen des Truth Booths", http.StatusInternalServerError)
+			return
+		}
+
+		w.WriteHeader(http.StatusNoContent)
+	}
+}

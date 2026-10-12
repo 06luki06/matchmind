@@ -414,4 +414,79 @@ paths:
       summary: Add a new truth booth result to a specific season
       tags:
       - TruthBooths
+  /api/v1/seasons/{season_id}/contenders/{id}:
+    delete:
+      parameters:
+      - description: Season ID
+        in: path
+        name: season_id
+        required: true
+        type: integer
+      - description: Contender ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "400":
+          description: Invalid season ID or contender ID
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      summary: Delete a contender for a specific season
+      tags:
+      - Contenders
+  /api/v1/seasons/{season_id}/matching-nights/{id}:
+    delete:
+      parameters:
+      - description: Season ID
+        in: path
+        name: season_id
+        required: true
+        type: integer
+      - description: Matching Night ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "400":
+          description: Invalid season ID or matching night ID
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      summary: Delete a matching night for a specific season
+      tags:
+      - MatchingNights
+  /api/v1/seasons/{season_id}/truth-booths/{id}:
+    delete:
+      parameters:
+      - description: Season ID
+        in: path
+        name: season_id
+        required: true
+        type: integer
+      - description: Truth Booth ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "400":
+          description: Invalid season ID or truth booth ID
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      summary: Delete a truth booth result for a specific season
+      tags:
+      - TruthBooths
 swagger: "2.0"

@@ -133,3 +133,23 @@ func getPairsForMatchingNight(db *sql.DB, mnID int) ([]MatchingNightPair, error)
 	}
 	return pairs, nil
 }
+
+func DeleteMatchingNight(db *sql.DB, seasonID, mnID int) error {
+	tx, err := db.Begin()
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback()
+
+	_, err = tx.Exec("DELETE FROM matching_night_pairs WHERE matching_night_id = ?", mnID)
+	if err != nil {
+		return err
+	}
+
+	_, err = tx.Exec("DELETE FROM matching_nights WHERE id = ? AND season_id = ?", mnID, seasonID)
+	if err != nil {
+		return err
+	}
+
+	return tx.Commit()
+}

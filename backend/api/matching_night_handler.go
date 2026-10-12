@@ -77,3 +77,32 @@ func (s *Server) handleAddMatchingNight() http.HandlerFunc {
 		json.NewEncoder(w).Encode(resp)
 	}
 }
+
+// @Summary Delete a matching night for a specific season
+// @Tags MatchingNights
+// @Param season_id path int true "Season ID"
+// @Param id path int true "Matching Night ID"
+// @Failure 400 {string} string "Invalid season ID or matching night ID"
+// @Failure 500 {string} string "Internal server error"
+// @Router /api/v1/seasons/{season_id}/matching-nights/{id} [delete]
+func (s *Server) handleDeleteMatchingNight() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		seasonID, err := strconv.Atoi(r.PathValue("season_id"))
+		if err != nil {
+			http.Error(w, "Invalid season ID or matching night ID", http.StatusBadRequest)
+			return
+		}
+		mnID, err := strconv.Atoi(r.PathValue("id"))
+		if err != nil {
+			http.Error(w, "Invalid season ID or matching night ID", http.StatusBadRequest)
+			return
+		}
+
+		if err := db.DeleteMatchingNight(s.db, seasonID, mnID); err != nil {
+			http.Error(w, "Fehler beim Löschen der Matching Night", http.StatusInternalServerError)
+			return
+		}
+
+		w.WriteHeader(http.StatusNoContent)
+	}
+}
