@@ -1,0 +1,32 @@
+version: "3.8"
+
+services:
+  # 1. Backend (only internal)
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    volumes:
+      - sqlite_data:/app/data
+    networks:
+      - matchmind-internal
+
+  # 2. Frontend (connects internal network with your existing Nginx Proxy)
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    networks:
+      - matchmind-internal
+      - my_smart_home
+
+networks:
+  matchmind-internal:
+    driver: bridge
+  my_smart_home:
+    external: true
+
+volumes:
+  sqlite_data:
