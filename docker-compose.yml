@@ -7,6 +7,7 @@ services:
       context: ./backend
       dockerfile: Dockerfile
     restart: unless-stopped
+    container_name: matchmind-backend
     volumes:
       - sqlite_data:/app/data
     networks:
@@ -18,6 +19,7 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
     restart: unless-stopped
+    container_name: matchmind-frontend
     networks:
       - matchmind-internal
       - my_smart_home
