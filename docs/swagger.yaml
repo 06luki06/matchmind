@@ -186,6 +186,23 @@ info:
   contact: {}
 paths:
   /api/v1/seasons:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/api.SeasonResponse'
+            type: array
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      summary: List all seasons
+      tags:
+      - Seasons
     post:
       consumes:
       - application/json

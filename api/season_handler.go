@@ -164,3 +164,31 @@ func (s *Server) handleGetSeason() http.HandlerFunc {
 		json.NewEncoder(w).Encode(resp)
 	}
 }
+
+// @Summary List all seasons
+// @Tags Seasons
+// @Produce json
+// @Success 200 {array} SeasonResponse
+// @Failure 500 {string} string "Internal server error"
+// @Router /api/v1/seasons [get]
+func (s *Server) handleListSeasons() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		seasons, err := db.GetAllSeasons(s.db)
+		if err != nil {
+			http.Error(w, "Fehler beim Laden der Staffeln", http.StatusInternalServerError)
+			return
+		}
+
+		resp := make([]SeasonResponse, 0, len(seasons))
+		for _, s := range seasons {
+			resp = append(resp, SeasonResponse{
+				ID:        s.ID,
+				Name:      s.Name,
+				CreatedAt: s.CreatedAt,
+			})
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(resp)
+	}
+}

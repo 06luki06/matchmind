@@ -40,3 +40,30 @@ func GetSeasonByID(db *sql.DB, seasonID int) (*Season, error) {
 
 	return &season, nil
 }
+
+func GetAllSeasons(db *sql.DB) ([]Season, error) {
+	query := `
+		SELECT id, name, created_at
+		FROM seasons
+		ORDER BY id DESC
+	`
+	rows, err := db.Query(query)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var seasons []Season
+	for rows.Next() {
+		var s Season
+		if err := rows.Scan(&s.ID, &s.Name, &s.CreatedAt); err != nil {
+			return nil, err
+		}
+		seasons = append(seasons, s)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return seasons, nil
+}

@@ -32,7 +32,7 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 // @version 1.0
 // @description REST API for the MatchMind application.
 // @host localhost:8080
-// @BasePath /
+// @BasePath /api/v1
 func (s *Server) routes() {
 	s.router.HandleFunc("/health", s.handleHealth())
 
@@ -40,6 +40,7 @@ func (s *Server) routes() {
 
 	// Seasons
 	s.router.HandleFunc("POST /api/v1/seasons", s.handleCreateSeason())
+	s.router.HandleFunc("GET /api/v1/seasons", s.handleListSeasons())
 	s.router.HandleFunc("GET /api/v1/seasons/{id}", s.handleGetSeason())
 
 	// Contenders
