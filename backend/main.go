@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 
 	"matchmind/api"
 	"matchmind/db"
@@ -12,7 +13,12 @@ import (
 func main() {
 	fmt.Println("Start MatchMind Server...")
 
-	database, err := db.InitDB("./matchmind.db")
+	dbPath := os.Getenv("DB_PATH")
+	if dbPath == "" {
+		dbPath = "matchmind.db"
+	}
+
+	database, err := db.InitDB(dbPath)
 
 	if err != nil {
 		log.Fatalf("Database initialisation failed: %v", err)

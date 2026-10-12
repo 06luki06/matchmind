@@ -8,8 +8,10 @@ services:
       dockerfile: Dockerfile
     restart: unless-stopped
     container_name: matchmind-backend
+    environment:
+      - DB_PATH=/app/data/matchmind.db
     volumes:
-      - sqlite_data:/app/data
+      - ./data:/app/data
     networks:
       - matchmind-internal
 
@@ -29,6 +31,3 @@ networks:
     driver: bridge
   my_smart_home:
     external: true
-
-volumes:
-  sqlite_data:
