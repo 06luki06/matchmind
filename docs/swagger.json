@@ -1,0 +1,616 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "contact": {}
+    },
+    "paths": {
+        "/api/v1/seasons": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Seasons"
+                ],
+                "summary": "Create a new season",
+                "parameters": [
+                    {
+                        "description": "Season details",
+                        "name": "season",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/api.CreateSeasonRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/api.SeasonResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/seasons/{id}": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Seasons"
+                ],
+                "summary": "Get details of a specific season",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Season ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/api.GetSeasonDetailResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid season ID",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Season not found",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/seasons/{id}/contenders": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Contenders"
+                ],
+                "summary": "Get all contenders for a specific season",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Season ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/api.ContendersListResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid season ID",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Contenders"
+                ],
+                "summary": "Add a new contender to a specific season",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Season ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Contender details",
+                        "name": "contender",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/api.AddContenderRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/api.ContenderResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/seasons/{id}/matching-nights": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "MatchingNights"
+                ],
+                "summary": "Add a new matching night to a specific season",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Season ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Matching Night details",
+                        "name": "matchingNight",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/api.AddMatchingNightRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/api.MatchingNightResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/seasons/{id}/solve": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Solver"
+                ],
+                "summary": "Solve a specific season using the solver engine",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Season ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/api.SolveSeasonResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid season ID or not enough contenders",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/seasons/{id}/truth-booths": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "TruthBooths"
+                ],
+                "summary": "Add a new truth booth result to a specific season",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Season ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Truth Booth details",
+                        "name": "truthBooth",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/api.AddTruthBoothRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/api.TruthBoothResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "api.AddContenderRequest": {
+            "type": "object",
+            "properties": {
+                "gender": {
+                    "description": "\"M\" or \"F\"",
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "api.AddMatchingNightRequest": {
+            "type": "object",
+            "properties": {
+                "lights_count": {
+                    "type": "integer"
+                },
+                "night_number": {
+                    "type": "integer"
+                },
+                "pairs": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/api.PairRequest"
+                    }
+                }
+            }
+        },
+        "api.AddTruthBoothRequest": {
+            "type": "object",
+            "properties": {
+                "female_id": {
+                    "type": "integer"
+                },
+                "is_match": {
+                    "type": "boolean"
+                },
+                "male_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "api.ContenderResponse": {
+            "type": "object",
+            "properties": {
+                "gender": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "season_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "api.ContendersListResponse": {
+            "type": "object",
+            "properties": {
+                "contenders": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/api.ContenderResponse"
+                    }
+                },
+                "men_count": {
+                    "type": "integer"
+                },
+                "season_id": {
+                    "type": "integer"
+                },
+                "women_count": {
+                    "type": "integer"
+                }
+            }
+        },
+        "api.CreateSeasonRequest": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "api.GetSeasonDetailResponse": {
+            "type": "object",
+            "properties": {
+                "contenders": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/api.ContenderResponse"
+                    }
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "matching_nights": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/api.MatchingNightDetail"
+                    }
+                },
+                "men_count": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "truth_booths": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/api.TruthBoothDetail"
+                    }
+                },
+                "women_count": {
+                    "type": "integer"
+                }
+            }
+        },
+        "api.MatchingNightDetail": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "lights_count": {
+                    "type": "integer"
+                },
+                "night_number": {
+                    "type": "integer"
+                },
+                "pairs": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/api.MatchingNightPairDetail"
+                    }
+                }
+            }
+        },
+        "api.MatchingNightPairDetail": {
+            "type": "object",
+            "properties": {
+                "female_id": {
+                    "type": "integer"
+                },
+                "male_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "api.MatchingNightResponse": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "lights_count": {
+                    "type": "integer"
+                },
+                "night_number": {
+                    "type": "integer"
+                },
+                "pairs": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/api.PairRequest"
+                    }
+                },
+                "season_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "api.PairRequest": {
+            "type": "object",
+            "properties": {
+                "female_id": {
+                    "type": "integer"
+                },
+                "male_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "api.SeasonResponse": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "api.SolveSeasonResponse": {
+            "type": "object",
+            "properties": {
+                "men": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/api.ContenderResponse"
+                    }
+                },
+                "men_count": {
+                    "type": "integer"
+                },
+                "probabilities": {
+                    "type": "array",
+                    "items": {
+                        "type": "array",
+                        "items": {
+                            "type": "number",
+                            "format": "float64"
+                        }
+                    }
+                },
+                "remaining_combinations": {
+                    "type": "integer"
+                },
+                "season_id": {
+                    "type": "integer"
+                },
+                "women": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/api.ContenderResponse"
+                    }
+                },
+                "women_count": {
+                    "type": "integer"
+                }
+            }
+        },
+        "api.TruthBoothDetail": {
+            "type": "object",
+            "properties": {
+                "female_id": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "is_match": {
+                    "type": "boolean"
+                },
+                "male_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "api.TruthBoothResponse": {
+            "type": "object",
+            "properties": {
+                "female_id": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "is_match": {
+                    "type": "boolean"
+                },
+                "male_id": {
+                    "type": "integer"
+                },
+                "season_id": {
+                    "type": "integer"
+                }
+            }
+        }
+    }
+}

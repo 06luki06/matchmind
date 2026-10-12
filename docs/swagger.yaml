@@ -1,0 +1,400 @@
+definitions:
+  api.AddContenderRequest:
+    properties:
+      gender:
+        description: '"M" or "F"'
+        type: string
+      name:
+        type: string
+    type: object
+  api.AddMatchingNightRequest:
+    properties:
+      lights_count:
+        type: integer
+      night_number:
+        type: integer
+      pairs:
+        items:
+          $ref: '#/definitions/api.PairRequest'
+        type: array
+    type: object
+  api.AddTruthBoothRequest:
+    properties:
+      female_id:
+        type: integer
+      is_match:
+        type: boolean
+      male_id:
+        type: integer
+    type: object
+  api.ContenderResponse:
+    properties:
+      gender:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      season_id:
+        type: integer
+    type: object
+  api.ContendersListResponse:
+    properties:
+      contenders:
+        items:
+          $ref: '#/definitions/api.ContenderResponse'
+        type: array
+      men_count:
+        type: integer
+      season_id:
+        type: integer
+      women_count:
+        type: integer
+    type: object
+  api.CreateSeasonRequest:
+    properties:
+      name:
+        type: string
+    type: object
+  api.GetSeasonDetailResponse:
+    properties:
+      contenders:
+        items:
+          $ref: '#/definitions/api.ContenderResponse'
+        type: array
+      created_at:
+        type: string
+      id:
+        type: integer
+      matching_nights:
+        items:
+          $ref: '#/definitions/api.MatchingNightDetail'
+        type: array
+      men_count:
+        type: integer
+      name:
+        type: string
+      truth_booths:
+        items:
+          $ref: '#/definitions/api.TruthBoothDetail'
+        type: array
+      women_count:
+        type: integer
+    type: object
+  api.MatchingNightDetail:
+    properties:
+      id:
+        type: integer
+      lights_count:
+        type: integer
+      night_number:
+        type: integer
+      pairs:
+        items:
+          $ref: '#/definitions/api.MatchingNightPairDetail'
+        type: array
+    type: object
+  api.MatchingNightPairDetail:
+    properties:
+      female_id:
+        type: integer
+      male_id:
+        type: integer
+    type: object
+  api.MatchingNightResponse:
+    properties:
+      id:
+        type: integer
+      lights_count:
+        type: integer
+      night_number:
+        type: integer
+      pairs:
+        items:
+          $ref: '#/definitions/api.PairRequest'
+        type: array
+      season_id:
+        type: integer
+    type: object
+  api.PairRequest:
+    properties:
+      female_id:
+        type: integer
+      male_id:
+        type: integer
+    type: object
+  api.SeasonResponse:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+    type: object
+  api.SolveSeasonResponse:
+    properties:
+      men:
+        items:
+          $ref: '#/definitions/api.ContenderResponse'
+        type: array
+      men_count:
+        type: integer
+      probabilities:
+        items:
+          items:
+            format: float64
+            type: number
+          type: array
+        type: array
+      remaining_combinations:
+        type: integer
+      season_id:
+        type: integer
+      women:
+        items:
+          $ref: '#/definitions/api.ContenderResponse'
+        type: array
+      women_count:
+        type: integer
+    type: object
+  api.TruthBoothDetail:
+    properties:
+      female_id:
+        type: integer
+      id:
+        type: integer
+      is_match:
+        type: boolean
+      male_id:
+        type: integer
+    type: object
+  api.TruthBoothResponse:
+    properties:
+      female_id:
+        type: integer
+      id:
+        type: integer
+      is_match:
+        type: boolean
+      male_id:
+        type: integer
+      season_id:
+        type: integer
+    type: object
+info:
+  contact: {}
+paths:
+  /api/v1/seasons:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Season details
+        in: body
+        name: season
+        required: true
+        schema:
+          $ref: '#/definitions/api.CreateSeasonRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/api.SeasonResponse'
+        "400":
+          description: Invalid request
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      summary: Create a new season
+      tags:
+      - Seasons
+  /api/v1/seasons/{id}:
+    get:
+      parameters:
+      - description: Season ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.GetSeasonDetailResponse'
+        "400":
+          description: Invalid season ID
+          schema:
+            type: string
+        "404":
+          description: Season not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      summary: Get details of a specific season
+      tags:
+      - Seasons
+  /api/v1/seasons/{id}/contenders:
+    get:
+      parameters:
+      - description: Season ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.ContendersListResponse'
+        "400":
+          description: Invalid season ID
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      summary: Get all contenders for a specific season
+      tags:
+      - Contenders
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Season ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Contender details
+        in: body
+        name: contender
+        required: true
+        schema:
+          $ref: '#/definitions/api.AddContenderRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/api.ContenderResponse'
+        "400":
+          description: Invalid request
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      summary: Add a new contender to a specific season
+      tags:
+      - Contenders
+  /api/v1/seasons/{id}/matching-nights:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Season ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Matching Night details
+        in: body
+        name: matchingNight
+        required: true
+        schema:
+          $ref: '#/definitions/api.AddMatchingNightRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/api.MatchingNightResponse'
+        "400":
+          description: Invalid request
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      summary: Add a new matching night to a specific season
+      tags:
+      - MatchingNights
+  /api/v1/seasons/{id}/solve:
+    get:
+      parameters:
+      - description: Season ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.SolveSeasonResponse'
+        "400":
+          description: Invalid season ID or not enough contenders
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      summary: Solve a specific season using the solver engine
+      tags:
+      - Solver
+  /api/v1/seasons/{id}/truth-booths:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Season ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Truth Booth details
+        in: body
+        name: truthBooth
+        required: true
+        schema:
+          $ref: '#/definitions/api.AddTruthBoothRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/api.TruthBoothResponse'
+        "400":
+          description: Invalid request
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      summary: Add a new truth booth result to a specific season
+      tags:
+      - TruthBooths
+swagger: "2.0"
