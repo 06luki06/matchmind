@@ -347,19 +347,33 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ seasonId, onBack }
 
                 {/* 2. Auswertung: Fixe Matches & Wahrscheinliche Paare (>= 50%) */}
                 {(() => {
-                  const allPairs: { male: string; female: string; prob: number }[] = [];
+                  const allPairs: { male: string; female: string; prob: number; source?: string }[] = [];
                   solveData.men.forEach((m, mIdx) => {
                     solveData.women.forEach((w, wIdx) => {
                       const prob = solveData.probabilities[mIdx]?.[wIdx] ?? 0;
                       if (prob > 0) {
-                        allPairs.push({ male: m.name, female: w.name, prob });
+                        allPairs.push({ male: m.name, female: w.name, prob, source: 'solver' });
                       }
                     });
                   });
 
-                  const perfectMatches = allPairs.filter(p => p.prob === 100);
+                  // 100% Paare, die der Solver rein durch Logik (z. B. nach Blackout) gefunden hat
+                  const solverPerfectMatches = allPairs.filter(p => p.prob === 100);
 
-                  // Nur Paare unter 100% und mindestens 50% Wahrscheinlichkeit
+                  // Bestätigte Paare aus der Matchbox (Truth Booths)
+                  const tbPerfectMatches = (season?.truth_booths || [])
+                    .filter(tb => tb.is_match)
+                    .map(tb => ({
+                      male: getContenderName(tb.male_id),
+                      female: getContenderName(tb.female_id),
+                      prob: 100,
+                      source: 'matchbox'
+                    }));
+
+                  // Beide Listen kombinieren
+                  const perfectMatches = [...tbPerfectMatches, ...solverPerfectMatches];
+
+                  // Nur Paare unter 100% und mindestens 50% Wahrscheinlichkeit aus dem Solver
                   const probableMatches = allPairs
                     .filter(p => p.prob < 100 && p.prob >= 50)
                     .sort((a, b) => b.prob - a.prob);
@@ -376,7 +390,12 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ seasonId, onBack }
                             {perfectMatches.map((p, i) => (
                               <div key={i} className="bg-white dark:bg-slate-900/90 border border-emerald-500/40 px-3 py-2 rounded-xl text-xs flex justify-between items-center font-semibold text-emerald-700 dark:text-emerald-300 shadow-sm">
                                 <span>{p.male} & {p.female}</span>
-                                <span className="bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 px-2 py-0.5 rounded-md text-[10px]">100%</span>
+                                <div className="flex gap-1.5">
+                                  {p.source === 'matchbox' && (
+                                    <span className="bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 px-2 py-0.5 rounded-md text-[10px]">Matchbox 🏝️</span>
+                                  )}
+                                  <span className="bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 px-2 py-0.5 rounded-md text-[10px]">100%</span>
+                                </div>
                               </div>
                             ))}
                           </div>
