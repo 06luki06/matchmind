@@ -99,10 +99,12 @@ func (s *Server) handleGetSeason() http.HandlerFunc {
 			}
 
 			contendersResp = append(contendersResp, ContenderResponse{
-				ID:       c.ID,
-				SeasonID: c.SeasonID,
-				Name:     c.Name,
-				Gender:   c.Gender,
+				ID:          c.ID,
+				SeasonID:    c.SeasonID,
+				Name:        c.Name,
+				Gender:      c.Gender,
+				JoinedNight: c.JoinedNight,
+				IsActive:    c.IsActive,
 			})
 		}
 
@@ -192,4 +194,3 @@ func (s *Server) handleListSeasons() http.HandlerFunc {
 		json.NewEncoder(w).Encode(resp)
 	}
 }
-

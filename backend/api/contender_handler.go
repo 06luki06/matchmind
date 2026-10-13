@@ -62,6 +62,7 @@ func (s *Server) handleAddContender() http.HandlerFunc {
 			Gender:      contender.Gender,
 			SeasonID:    contender.SeasonID,
 			JoinedNight: contender.JoinedNight,
+			IsActive:   contender.IsActive,
 		}
 
 		w.Header().Set("Content-Type", "application/json")
@@ -109,6 +110,7 @@ func (s *Server) handleGetContenders() http.HandlerFunc {
 				Gender:      c.Gender,
 				SeasonID:    c.SeasonID,
 				JoinedNight: c.JoinedNight,
+				IsActive:   c.IsActive,
 			})
 		}
 

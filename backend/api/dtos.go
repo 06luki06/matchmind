@@ -26,6 +26,7 @@ type ContenderResponse struct {
 	Name        string `json:"name"`
 	Gender      string `json:"gender"`
 	JoinedNight int    `json:"joined_night"`
+	IsActive    bool   `json:"is_active"`
 }
 
 type ContendersListResponse struct {
