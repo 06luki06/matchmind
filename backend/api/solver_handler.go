@@ -37,21 +37,27 @@ func (s *Server) handleSolveSeason() http.HandlerFunc {
 		dbIDToMaleIdx := make(map[int]int)
 		dbIDToFemaleIdx := make(map[int]int)
 
+		var menJoined []int
+		var womenJoined []int
+
 		for _, c := range contenders {
 			resp := ContenderResponse{
 				ID:       c.ID,
 				SeasonID: c.SeasonID,
 				Name:     c.Name,
 				Gender:   c.Gender,
+				JoinedNight: c.JoinedNight,
 			}
 
 			switch c.Gender {
 			case "M":
 				dbIDToMaleIdx[c.ID] = len(men)
 				men = append(men, resp)
+				menJoined = append(menJoined, c.JoinedNight)
 			case "F":
 				dbIDToFemaleIdx[c.ID] = len(women)
 				women = append(women, resp)
+				womenJoined = append(womenJoined, c.JoinedNight)
 			}
 		}
 
@@ -105,13 +111,14 @@ func (s *Server) handleSolveSeason() http.HandlerFunc {
 				}
 			}
 			mnRules = append(mnRules, solver.MatchingNightRule{
+				NightNumber: mn.NightNumber,
 				Pairs:       mappedPairs,
 				LightsCount: mn.LightsCount,
 			})
 		}
 
 		// 5. Solve the season using the solver engine
-		validCombs := solver.SolveStream(menCount, womenCount, tbRules, mnRules)
+		validCombs := solver.SolveStream(menCount, womenCount, tbRules, mnRules, menJoined, womenJoined)
 		matrix := solver.CalculateProbabilityMatrix(validCombs, menCount, womenCount)
 
 		// 6. Respond with remaining combinations and probability matrix

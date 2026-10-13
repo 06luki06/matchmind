@@ -6,7 +6,7 @@ import (
 )
 
 // SolveStream processes incoming combination chunks on the fly and returns ONLY valid combinations.
-func SolveStream(menCount, womenCount int, tbRules []TruthBoothRule, mnRules []MatchingNightRule) []Combination {
+func SolveStream(menCount, womenCount int, tbRules []TruthBoothRule, mnRules []MatchingNightRule, menJoined []int, womenJoined []int) []Combination {
 	combChan := make(chan []Combination, runtime.NumCPU()*2)
 	validChan := make(chan Combination, 10000)
 
@@ -42,7 +42,7 @@ func SolveStream(menCount, womenCount int, tbRules []TruthBoothRule, mnRules []M
 
 					// 2. Check Matching Nights
 					for _, rule := range mnRules {
-						if !MatchesMatchingNight(comb, rule, isMenSurplus) {
+						if !MatchesMatchingNight(comb, rule, isMenSurplus, menJoined, womenJoined) {
 							valid = false
 							break
 						}

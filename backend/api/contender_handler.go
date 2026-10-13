@@ -45,17 +45,23 @@ func (s *Server) handleAddContender() http.HandlerFunc {
 			return
 		}
 
-		contender, err := db.AddContender(s.db, seasonID, req.Name, req.Gender)
+		joinedNight := req.JoinedNight
+		if joinedNight <= 0 {
+			joinedNight = 1
+		}
+
+		contender, err := db.AddContender(s.db, seasonID, req.Name, req.Gender, joinedNight)
 		if err != nil {
 			http.Error(w, "Error when creating a contender", http.StatusInternalServerError)
 			return
 		}
 
 		resp := ContenderResponse{
-			ID:       contender.ID,
-			Name:     contender.Name,
-			Gender:   contender.Gender,
-			SeasonID: contender.SeasonID,
+			ID:          contender.ID,
+			Name:        contender.Name,
+			Gender:      contender.Gender,
+			SeasonID:    contender.SeasonID,
+			JoinedNight: contender.JoinedNight,
 		}
 
 		w.Header().Set("Content-Type", "application/json")
@@ -98,10 +104,11 @@ func (s *Server) handleGetContenders() http.HandlerFunc {
 			}
 
 			contenderResp = append(contenderResp, ContenderResponse{
-				ID:       c.ID,
-				Name:     c.Name,
-				Gender:   c.Gender,
-				SeasonID: c.SeasonID,
+				ID:          c.ID,
+				Name:        c.Name,
+				Gender:      c.Gender,
+				SeasonID:    c.SeasonID,
+				JoinedNight: c.JoinedNight,
 			})
 		}
 

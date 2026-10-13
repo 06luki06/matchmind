@@ -16,6 +16,7 @@ interface Contender {
   season_id: number;
   name: string;
   gender: string;
+  joined_night: number;
 }
 
 interface TruthBoothDetail {
@@ -73,6 +74,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ seasonId, onBack }
   // Form States
   const [contenderName, setContenderName] = useState('');
   const [contenderGender, setContenderGender] = useState<'M' | 'F'>('M');
+  const [contenderJoinedNight, setContenderJoinedNight] = useState<number>(1);
 
   const [tbMaleId, setTbMaleId] = useState<number>(0);
   const [tbFemaleId, setTbFemaleId] = useState<number>(0);
@@ -137,10 +139,11 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ seasonId, onBack }
     await fetch(`/api/v1/seasons/${seasonId}/contenders`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name: contenderName, gender: contenderGender }),
+      body: JSON.stringify({ name: contenderName, gender: contenderGender, joined_night: Number(contenderJoinedNight) || 1 }),
     });
 
     setContenderName('');
+    setContenderJoinedNight(1);
     setModalType(null);
     loadSeasonData();
   };
@@ -434,7 +437,14 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ seasonId, onBack }
                 <div className="space-y-1.5">
                   {season?.contenders?.filter(c => c.gender === 'M').map(c => (
                     <div key={c.id} className="bg-slate-100/80 dark:bg-slate-950/60 border border-slate-200/80 dark:border-slate-800/80 px-3 py-2 rounded-xl text-xs font-medium text-slate-800 dark:text-slate-200 flex items-center justify-between group">
-                      <span>{c.name}</span>
+                      <div className="flex items-center gap-2">
+                        <span>{c.name}</span>
+                        {c.joined_night > 1 && (
+                          <span className="text-[10px] bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 px-1.5 py-0.5 rounded border border-indigo-500/20 font-semibold">
+                            ab Nacht {c.joined_night}
+                          </span>
+                        )}
+                      </div>
                       <button
                         onClick={() => handleDeleteContender(c.id, c.name)}
                         className="text-slate-400 hover:text-rose-500 dark:text-slate-600 dark:hover:text-rose-400 p-1 rounded transition-colors"
@@ -455,7 +465,14 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ seasonId, onBack }
                 <div className="space-y-1.5">
                   {season?.contenders?.filter(c => c.gender === 'F').map(c => (
                     <div key={c.id} className="bg-slate-100/80 dark:bg-slate-950/60 border border-slate-200/80 dark:border-slate-800/80 px-3 py-2 rounded-xl text-xs font-medium text-slate-800 dark:text-slate-200 flex items-center justify-between group">
-                      <span>{c.name}</span>
+                      <div className="flex items-center gap-2">
+                        <span>{c.name}</span>
+                        {c.joined_night > 1 && (
+                          <span className="text-[10px] bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 px-1.5 py-0.5 rounded border border-indigo-500/20 font-semibold">
+                            ab Nacht {c.joined_night}
+                          </span>
+                        )}
+                      </div>
                       <button
                         onClick={() => handleDeleteContender(c.id, c.name)}
                         className="text-slate-400 hover:text-rose-500 dark:text-slate-600 dark:hover:text-rose-400 p-1 rounded transition-colors"
@@ -633,6 +650,18 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ seasonId, onBack }
                     Frau
                   </button>
                 </div>
+
+                <div>
+                  <label className="text-xs text-slate-500 dark:text-slate-400 block mb-1">Dabei ab Matching Night Nr.</label>
+                  <input
+                    type="number"
+                    min={1}
+                    value={contenderJoinedNight}
+                    onChange={e => setContenderJoinedNight(Number(e.target.value))}
+                    className="w-full bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-xl px-4 py-2.5 text-sm text-slate-900 dark:text-white outline-none focus:border-indigo-500"
+                  />
+                </div>
+
                 <div className="flex gap-2 pt-2">
                   <button type="button" onClick={() => setModalType(null)} className="flex-1 bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 py-3 rounded-xl text-xs font-semibold">Abbrechen</button>
                   <button type="submit" className="flex-1 bg-indigo-600 text-white py-3 rounded-xl text-xs font-semibold">Speichern</button>

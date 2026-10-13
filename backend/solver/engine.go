@@ -20,6 +20,7 @@ type Pair struct {
 
 // MatchingNightRule represents the outcome of a matching night
 type MatchingNightRule struct {
+	NightNumber int
 	Pairs       []Pair
 	LightsCount int
 }
@@ -46,9 +47,17 @@ func MatchesTruthBooth(comb Combination, rule TruthBoothRule, isMenSurplus bool)
 }
 
 // MatchesMatchingNight checks if a combination yields the exact lights count for a given round.
-func MatchesMatchingNight(comb Combination, rule MatchingNightRule, isMenSurplus bool) bool {
+func MatchesMatchingNight(comb Combination, rule MatchingNightRule, isMenSurplus bool, menJoined []int, womenJoined []int) bool {
 	var lights uint8 = 0
 	for _, pair := range rule.Pairs {
+		if int(pair.MaleID) < len(menJoined) && rule.NightNumber < menJoined[pair.MaleID] {
+			continue
+		}
+
+		if int(pair.FemaleID) < len(womenJoined) && rule.NightNumber < womenJoined[pair.FemaleID] {
+			continue
+		}
+
 		if isMenSurplus {
 			if int(pair.MaleID) < len(comb) && comb[pair.MaleID] == pair.FemaleID {
 				lights++

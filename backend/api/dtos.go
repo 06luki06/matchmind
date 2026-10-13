@@ -15,15 +15,17 @@ type SeasonResponse struct {
 }
 
 type AddContenderRequest struct {
-	Name   string `json:"name"`
-	Gender string `json:"gender"` // "M" or "F"
+	Name        string `json:"name"`
+	Gender      string `json:"gender"` // "M" or "F"
+	JoinedNight int    `json:"joined_night,omitempty"`
 }
 
 type ContenderResponse struct {
-	ID       int    `json:"id"`
-	SeasonID int    `json:"season_id"`
-	Name     string `json:"name"`
-	Gender   string `json:"gender"`
+	ID          int    `json:"id"`
+	SeasonID    int    `json:"season_id"`
+	Name        string `json:"name"`
+	Gender      string `json:"gender"`
+	JoinedNight int    `json:"joined_night"`
 }
 
 type ContendersListResponse struct {

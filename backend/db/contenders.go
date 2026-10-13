@@ -3,25 +3,27 @@ package db
 import "database/sql"
 
 type Contender struct {
-	ID       int
-	SeasonID int
-	Name     string
-	Gender   string
+	ID          int
+	SeasonID    int
+	Name        string
+	Gender      string
+	JoinedNight int
 }
 
-func AddContender(db *sql.DB, seasonID int, name, gender string) (*Contender, error) {
+func AddContender(db *sql.DB, seasonID int, name, gender string, joinedNight int) (*Contender, error) {
 	query := `
-		INSERT INTO contenders (season_id, name, gender)
-		VALUES (?, ?, ?)
-		RETURNING id, season_id, name, gender
+		INSERT INTO contenders (season_id, name, gender, joined_night)
+		VALUES (?, ?, ?, ?)
+		RETURNING id, season_id, name, gender, joined_night
 	`
 
 	var contender Contender
-	err := db.QueryRow(query, seasonID, name, gender).Scan(
+	err := db.QueryRow(query, seasonID, name, gender, joinedNight).Scan(
 		&contender.ID,
 		&contender.SeasonID,
 		&contender.Name,
 		&contender.Gender,
+		&contender.JoinedNight,
 	)
 	if err != nil {
 		return nil, err
@@ -31,7 +33,7 @@ func AddContender(db *sql.DB, seasonID int, name, gender string) (*Contender, er
 
 func GetContendersBySeason(db *sql.DB, seasonID int) ([]*Contender, error) {
 	query := `
-		SELECT id, season_id, name, gender
+		SELECT id, season_id, name, gender, joined_night
 		FROM contenders
 		WHERE season_id = ?
 		ORDER BY gender DESC, id ASC
@@ -51,6 +53,7 @@ func GetContendersBySeason(db *sql.DB, seasonID int) ([]*Contender, error) {
 			&contender.SeasonID,
 			&contender.Name,
 			&contender.Gender,
+			&contender.JoinedNight,
 		)
 		if err != nil {
 			return nil, err
