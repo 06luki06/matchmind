@@ -80,6 +80,14 @@ func (s *Server) handleSolveSeason() http.HandlerFunc {
 			return
 		}
 
+		perfectMatches := make(map[string]bool)
+		for _, tb := range rawTBRules {
+			if tb.IsMatch {
+				key := strconv.Itoa(tb.MaleID) + "-" + strconv.Itoa(tb.FemaleID)
+				perfectMatches[key] = true
+			}
+		}
+
 		tbRules := make([]solver.TruthBoothRule, 0, len(rawTBRules))
 		for _, tb := range rawTBRules {
 			mIdx, mOk := dbIDToMaleIdx[int(tb.MaleID)]
@@ -104,6 +112,8 @@ func (s *Server) handleSolveSeason() http.HandlerFunc {
 		mnRules := make([]solver.MatchingNightRule, 0, len(rawMNRules))
 		for _, mn := range rawMNRules {
 			mappedPairs := make([]solver.Pair, 0, len(mn.Pairs))
+			adjustedLights := mn.LightsCount
+
 			for _, p := range mn.Pairs {
 				mIdx, mOk := dbIDToMaleIdx[p.MaleID]
 				fIdx, fOk := dbIDToFemaleIdx[p.FemaleID]
@@ -112,12 +122,22 @@ func (s *Server) handleSolveSeason() http.HandlerFunc {
 						MaleID:   uint8(mIdx),
 						FemaleID: uint8(fIdx),
 					})
+				} else {
+					key := strconv.Itoa(p.MaleID) + "-" + strconv.Itoa(p.FemaleID)
+					if perfectMatches[key] {
+						adjustedLights--
+					}
 				}
 			}
+
+			if adjustedLights < 0 {
+				adjustedLights = 0
+			}
+
 			mnRules = append(mnRules, solver.MatchingNightRule{
 				NightNumber: mn.NightNumber,
 				Pairs:       mappedPairs,
-				LightsCount: mn.LightsCount,
+				LightsCount: adjustedLights,
 			})
 		}
 
