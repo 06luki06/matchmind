@@ -17,6 +17,7 @@ interface Contender {
   name: string;
   gender: string;
   joined_night: number;
+  is_active: boolean;
 }
 
 interface TruthBoothDetail {
@@ -436,15 +437,29 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ seasonId, onBack }
                 </span>
                 <div className="space-y-1.5">
                   {season?.contenders?.filter(c => c.gender === 'M').map(c => (
-                    <div key={c.id} className="bg-slate-100/80 dark:bg-slate-950/60 border border-slate-200/80 dark:border-slate-800/80 px-3 py-2 rounded-xl text-xs font-medium text-slate-800 dark:text-slate-200 flex items-center justify-between group">
-                      <div className="flex items-center gap-2">
-                        <span>{c.name}</span>
-                        {c.joined_night > 1 && (
+                    <div
+                      key={c.id}
+                      className={`px-3 py-2 rounded-xl text-xs font-medium flex items-center justify-between group border transition-all ${c.is_active
+                        ? 'bg-slate-100/80 dark:bg-slate-950/60 border-slate-200/80 dark:border-slate-800/80 text-slate-800 dark:text-slate-200'
+                        : 'bg-rose-500/10 dark:bg-rose-950/30 border-rose-500/30 text-rose-700 dark:text-rose-300 opacity-80'
+                        }`}
+                    >
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className={!c.is_active ? 'line-through' : ''}>{c.name}</span>
+
+                        {c.joined_night > 1 && c.is_active && (
                           <span className="text-[10px] bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 px-1.5 py-0.5 rounded border border-indigo-500/20 font-semibold">
                             ab Nacht {c.joined_night}
                           </span>
                         )}
+
+                        {!c.is_active && (
+                          <span className="text-[10px] bg-rose-500/20 text-rose-600 dark:text-rose-400 px-1.5 py-0.5 rounded font-bold border border-rose-500/30">
+                            Honeymoon 🏝️
+                          </span>
+                        )}
                       </div>
+
                       <button
                         onClick={() => handleDeleteContender(c.id, c.name)}
                         className="text-slate-400 hover:text-rose-500 dark:text-slate-600 dark:hover:text-rose-400 p-1 rounded transition-colors"
@@ -464,12 +479,25 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ seasonId, onBack }
                 </span>
                 <div className="space-y-1.5">
                   {season?.contenders?.filter(c => c.gender === 'F').map(c => (
-                    <div key={c.id} className="bg-slate-100/80 dark:bg-slate-950/60 border border-slate-200/80 dark:border-slate-800/80 px-3 py-2 rounded-xl text-xs font-medium text-slate-800 dark:text-slate-200 flex items-center justify-between group">
-                      <div className="flex items-center gap-2">
-                        <span>{c.name}</span>
-                        {c.joined_night > 1 && (
+                    <div
+                      key={c.id}
+                      className={`px-3 py-2 rounded-xl text-xs font-medium flex items-center justify-between group border transition-all ${c.is_active
+                        ? 'bg-slate-100/80 dark:bg-slate-950/60 border-slate-200/80 dark:border-slate-800/80 text-slate-800 dark:text-slate-200'
+                        : 'bg-rose-500/10 dark:bg-rose-950/30 border-rose-500/30 text-rose-700 dark:text-rose-300 opacity-80'
+                        }`}
+                    >
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className={!c.is_active ? 'line-through' : ''}>{c.name}</span>
+
+                        {c.joined_night > 1 && c.is_active && (
                           <span className="text-[10px] bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 px-1.5 py-0.5 rounded border border-indigo-500/20 font-semibold">
                             ab Nacht {c.joined_night}
+                          </span>
+                        )}
+
+                        {!c.is_active && (
+                          <span className="text-[10px] bg-rose-500/20 text-rose-600 dark:text-rose-400 px-1.5 py-0.5 rounded font-bold border border-rose-500/30">
+                            Honeymoon 🏝️
                           </span>
                         )}
                       </div>
@@ -748,7 +776,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ seasonId, onBack }
 
                 <p className="text-xs text-slate-500 dark:text-slate-400 pt-1">Paarungen auswählen:</p>
                 <div className="space-y-2 max-h-48 overflow-y-auto pr-1">
-                  {season?.contenders?.filter(c => c.gender === 'M').map(m => {
+                  {season?.contenders?.filter(c => c.gender === 'M' && c.is_active).map(m => {
                     const currentPair = mnPairs.find(p => p.male_id === m.id);
                     return (
                       <div key={m.id} className="flex items-center gap-2 text-xs bg-slate-100 dark:bg-slate-950 p-2 rounded-xl border border-slate-200 dark:border-slate-800">
@@ -766,7 +794,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ seasonId, onBack }
                           className="w-2/3 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-800 rounded-lg px-2 py-1.5 text-slate-900 dark:text-white outline-none"
                         >
                           <option value={0}>-- Wählen --</option>
-                          {season?.contenders?.filter(c => c.gender === 'F').map(f => (
+                          {season?.contenders?.filter(c => c.gender === 'F' && c.is_active).map(f => (
                             <option key={f.id} value={f.id}>{f.name}</option>
                           ))}
                         </select>

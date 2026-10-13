@@ -26,6 +26,7 @@ func InitDB(filepath string) (*sql.DB, error) {
 		name TEXT NOT NULL,
 		gender TEXT NOT NULL CHECK(gender IN ('M', 'F')),
 		joined_night INTEGER NOT NULL DEFAULT 1,
+		is_active BOOLEAN NOT NULL DEFAULT 1,
 		created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
 		FOREIGN KEY(season_id) REFERENCES seasons(id) ON DELETE CASCADE
 	);
@@ -82,6 +83,7 @@ func runMigrations(db *sql.DB) error {
 	defer rows.Close()
 
 	hasJoinedNight := false
+	hasIsActive := false
 	for rows.Next() {
 		var cid int
 		var name, ctype string
@@ -94,7 +96,9 @@ func runMigrations(db *sql.DB) error {
 		}
 		if name == "joined_night" {
 			hasJoinedNight = true
-			break
+		}
+		if name == "is_active" {
+			hasIsActive = true
 		}
 	}
 
@@ -106,6 +110,27 @@ func runMigrations(db *sql.DB) error {
 		_, err := db.Exec("ALTER TABLE contenders ADD COLUMN joined_night INTEGER NOT NULL DEFAULT 1")
 		if err != nil {
 			return fmt.Errorf("failed to add joined_night column: %w", err)
+		}
+	}
+
+	if !hasIsActive {
+		_, err := db.Exec("ALTER TABLE contenders ADD COLUMN is_active BOOLEAN NOT NULL DEFAULT 1")
+		if err != nil {
+			return fmt.Errorf("failed to add is_active column: %w", err)
+		}
+
+		updateQuery := `
+			UPDATE contenders 
+			SET is_active = 0 
+			WHERE id IN (
+				SELECT male_id FROM truth_booths WHERE is_match = 1
+				UNION
+				SELECT female_id FROM truth_booths WHERE is_match = 1
+			)
+		`
+		_, err = db.Exec(updateQuery)
+		if err != nil {
+			return fmt.Errorf("failed to update existing matches status: %w", err)
 		}
 	}
 

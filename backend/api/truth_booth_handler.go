@@ -43,6 +43,10 @@ func (s *Server) handleAddTruthBooth() http.HandlerFunc {
 			return
 		}
 
+		if req.IsMatch {
+			_, _ = s.db.Exec("UPDATE contenders SET is_active = 0 WHERE id IN (?, ?)", req.MaleID, req.FemaleID)
+		}
+
 		resp := TruthBoothResponse{
 			ID:       tb.ID,
 			SeasonID: tb.SeasonID,
@@ -75,6 +79,13 @@ func (s *Server) handleDeleteTruthBooth() http.HandlerFunc {
 		if err != nil {
 			http.Error(w, "Invalid season ID or truth booth ID", http.StatusBadRequest)
 			return
+		}
+
+		var maleID, femaleID int
+		var isMatch bool
+		err = s.db.QueryRow("SELECT male_id, female_id, is_match FROM truth_booths WHERE id = ? AND season_id = ?", tbID, seasonID).Scan(&maleID, &femaleID, &isMatch)
+		if err == nil && isMatch {
+			_, _ = s.db.Exec("UPDATE contenders SET is_active = 1 WHERE id IN (?, ?)", maleID, femaleID)
 		}
 
 		if err := db.DeleteTruthBooth(s.db, seasonID, tbID); err != nil {

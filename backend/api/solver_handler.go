@@ -41,11 +41,15 @@ func (s *Server) handleSolveSeason() http.HandlerFunc {
 		var womenJoined []int
 
 		for _, c := range contenders {
+			if !c.IsActive {
+				continue
+			}
+
 			resp := ContenderResponse{
-				ID:       c.ID,
-				SeasonID: c.SeasonID,
-				Name:     c.Name,
-				Gender:   c.Gender,
+				ID:          c.ID,
+				SeasonID:    c.SeasonID,
+				Name:        c.Name,
+				Gender:      c.Gender,
 				JoinedNight: c.JoinedNight,
 			}
 

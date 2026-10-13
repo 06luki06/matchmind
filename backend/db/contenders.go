@@ -8,13 +8,14 @@ type Contender struct {
 	Name        string
 	Gender      string
 	JoinedNight int
+	IsActive    bool
 }
 
 func AddContender(db *sql.DB, seasonID int, name, gender string, joinedNight int) (*Contender, error) {
 	query := `
-		INSERT INTO contenders (season_id, name, gender, joined_night)
-		VALUES (?, ?, ?, ?)
-		RETURNING id, season_id, name, gender, joined_night
+		INSERT INTO contenders (season_id, name, gender, joined_night, is_active)
+		VALUES (?, ?, ?, ?, 1)
+		RETURNING id, season_id, name, gender, joined_night, is_active
 	`
 
 	var contender Contender
@@ -24,6 +25,7 @@ func AddContender(db *sql.DB, seasonID int, name, gender string, joinedNight int
 		&contender.Name,
 		&contender.Gender,
 		&contender.JoinedNight,
+		&contender.IsActive,
 	)
 	if err != nil {
 		return nil, err
@@ -33,7 +35,7 @@ func AddContender(db *sql.DB, seasonID int, name, gender string, joinedNight int
 
 func GetContendersBySeason(db *sql.DB, seasonID int) ([]*Contender, error) {
 	query := `
-		SELECT id, season_id, name, gender, joined_night
+		SELECT id, season_id, name, gender, joined_night, is_active
 		FROM contenders
 		WHERE season_id = ?
 		ORDER BY gender DESC, id ASC
@@ -54,6 +56,7 @@ func GetContendersBySeason(db *sql.DB, seasonID int) ([]*Contender, error) {
 			&contender.Name,
 			&contender.Gender,
 			&contender.JoinedNight,
+			&contender.IsActive,
 		)
 		if err != nil {
 			return nil, err
